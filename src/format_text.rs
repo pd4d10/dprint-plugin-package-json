@@ -1,4 +1,3 @@
-use crate::configuration::Configuration;
 use anyhow::Result;
 use serde_json::{Map, Value};
 use std::option;
@@ -43,7 +42,7 @@ const KEYS: [&str; 32] = [
     "workspaces",
 ];
 
-pub fn format_text(file_text: String, config: &Configuration) -> Result<Option<String>> {
+pub fn format_text(file_text: String) -> Result<Option<String>> {
     let value = serde_json::from_str(file_text.as_str()).unwrap();
     let sorted_value = match value {
         Value::Object(map) => {
@@ -74,4 +73,17 @@ pub fn format_text(file_text: String, config: &Configuration) -> Result<Option<S
     serde_json::to_string_pretty(&sorted_value)
         .map(option::Option::Some)
         .map_err(Into::into)
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn strips_bom() {
+        for input_text in [include_str!("fixtures/order.json")].iter() {
+            let result = format_text(input_text.to_string()).unwrap().unwrap();
+            assert_eq!(result, include_str!("fixtures/order-expected.json"));
+        }
+    }
 }

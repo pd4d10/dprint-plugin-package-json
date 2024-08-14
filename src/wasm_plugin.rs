@@ -72,7 +72,7 @@ impl SyncPluginHandler<Configuration> for MyPluginHandler {
         ) -> dprint_core::plugins::FormatResult,
     ) -> dprint_core::plugins::FormatResult {
         let file_text = String::from_utf8(request.file_bytes)?;
-        let result = format_text::format_text(file_text, request.config);
+        let result = format_text::format_text(file_text);
         result.map(|maybe_text| maybe_text.map(|t| t.into_bytes()))
     }
 }
