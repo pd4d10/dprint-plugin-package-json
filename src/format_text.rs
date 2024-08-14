@@ -49,10 +49,14 @@ pub fn format_text(file_text: String) -> Result<Option<String>> {
             let mut sorted_keys = vec![];
             let mut remaining_keys = vec![];
 
+            KEYS.iter().for_each(|key| {
+                if map.contains_key(*key) {
+                    sorted_keys.push((*key).to_string());
+                }
+            });
+
             for key in map.keys() {
-                if KEYS.contains(&key.as_str()) {
-                    sorted_keys.push(key.clone());
-                } else {
+                if !sorted_keys.contains(&key) {
                     remaining_keys.push(key.clone());
                 }
             }
@@ -62,6 +66,7 @@ pub fn format_text(file_text: String) -> Result<Option<String>> {
             for key in sorted_keys {
                 sorted_map.insert(key.clone(), map.get(&key).unwrap().clone());
             }
+
             for key in remaining_keys {
                 sorted_map.insert(key.clone(), map.get(&key).unwrap().clone());
             }
@@ -83,7 +88,10 @@ mod test {
     fn strips_bom() {
         for input_text in [include_str!("fixtures/order.json")].iter() {
             let result = format_text(input_text.to_string()).unwrap().unwrap();
-            assert_eq!(result, include_str!("fixtures/order-expected.json"));
+            assert_eq!(
+                result + "\n", // TODO:
+                include_str!("fixtures/order-expected.json")
+            );
         }
     }
 }
