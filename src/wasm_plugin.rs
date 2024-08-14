@@ -51,9 +51,8 @@ impl SyncPluginHandler<Configuration> for MyPluginHandler {
             config: Configuration { line_width },
             diagnostics,
             file_matching: FileMatchingInfo {
-                // these can be derived from the config
-                file_extensions: vec!["txt".to_string()],
-                file_names: vec![],
+                file_extensions: vec!["json".to_string()],
+                file_names: vec!["package".to_string()],
             },
         }
     }
