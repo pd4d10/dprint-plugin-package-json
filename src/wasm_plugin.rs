@@ -1,3 +1,5 @@
+use crate::configuration::Configuration;
+use crate::format_text;
 use anyhow::Result;
 use dprint_core::configuration::get_unknown_property_diagnostics;
 use dprint_core::configuration::get_value;
@@ -8,8 +10,6 @@ use dprint_core::plugins::FileMatchingInfo;
 use dprint_core::plugins::PluginInfo;
 use dprint_core::plugins::PluginResolveConfigurationResult;
 use dprint_core::plugins::SyncPluginHandler;
-
-use crate::configuration::Configuration; // import the Configuration from above
 
 #[derive(Default)]
 pub struct MyPluginHandler;
@@ -71,7 +71,9 @@ impl SyncPluginHandler<Configuration> for MyPluginHandler {
             dprint_core::plugins::SyncHostFormatRequest,
         ) -> dprint_core::plugins::FormatResult,
     ) -> dprint_core::plugins::FormatResult {
-        todo!()
+        let file_text = String::from_utf8(request.file_bytes)?;
+        let result = format_text::format_text(file_text, request.config);
+        result.map(|maybe_text| maybe_text.map(|t| t.into_bytes()))
     }
 }
 
